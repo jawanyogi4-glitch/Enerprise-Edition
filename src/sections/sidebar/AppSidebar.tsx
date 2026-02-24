@@ -343,8 +343,7 @@ function AppSidebarInner() {
     () => (
       <SidebarTab
         leftIcon={FileCog}
-        //onClick={() => router.push("/docgen_hitl")}
-        href="/docgen_hitl"
+         href="/chat/ai-drafting"
         folded={folded}
         lowlight={!folded}
       >
