@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CalendarIcon, DropdownIcon } from "@/components/icons/icons";
 import Link from "next/link";
 import { BackButton } from "@/components/BackButton";
 import Button from "@/refresh-components/buttons/Button";
@@ -22,14 +23,14 @@ export default function GenerateAgreementPage() {
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-const handleNavigation = () => {
-  console.log("scjhbkjsc");
-router.push("/chat/ai-drafting/select-template");
-}
+  const handleNavigation = () => {
+    console.log("scjhbkjsc");
+    router.push("/chat/ai-drafting/select-template");
+  }
 
   return (
-    <div className="p-8 w-full">
-      <StepsHITL step={1}/>
+    <div className="pt-20 px-8 pb-8 w-full">
+      <StepsHITL step={1} />
       <h1 className="text-2xl font-bold mb-6">
         AI Drafting - Generate any Agreement
       </h1>
@@ -55,13 +56,19 @@ router.push("/chat/ai-drafting/select-template");
           <label className="block text-sm font-medium mb-2">
             Effective Date *
           </label>
-          <input
-            type="date"
-            name="effectiveDate"
-            value={formData.effectiveDate}
-            onChange={handleChange}
-            className="w-full p-3 border rounded-lg"
-          />
+          <div className="relative">
+            <input
+              type="date"
+              name="effectiveDate"
+              value={formData.effectiveDate}
+              onChange={handleChange}
+              className="w-full p-3 border rounded-lg"
+            />
+            {/* Custom Calendar Icon */}
+            <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+              <CalendarIcon size={20} />
+            </div>
+          </div>
         </div>
 
         {/* Country */}
@@ -69,16 +76,21 @@ router.push("/chat/ai-drafting/select-template");
           <label className="block text-sm font-medium mb-2">
             Country *
           </label>
-          <select
-            name="country"
-            value={formData.country}
-            onChange={handleChange}
-            className="w-full p-3 border rounded-lg"
-          >
-            <option value="">Select Country</option>
-            <option value="India">India</option>
-            <option value="USA">USA</option>
-          </select>
+          <div className="relative">
+            <select
+              name="country"
+              value={formData.country}
+              onChange={handleChange}
+              className="w-full p-3 border rounded-lg"
+            >
+              <option value="">Select Country</option>
+              <option value="India">India</option>
+              <option value="USA">USA</option>
+            </select>
+            <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+              <DropdownIcon size={20} />
+            </div>
+          </div>
         </div>
 
         {/* State */}
@@ -86,16 +98,21 @@ router.push("/chat/ai-drafting/select-template");
           <label className="block text-sm font-medium mb-2">
             State *
           </label>
-          <select
-            name="state"
-            value={formData.state}
-            onChange={handleChange}
-            className="w-full p-3 border rounded-lg"
-          >
-            <option value="">Select State</option>
-            <option value="Maharashtra">Maharashtra</option>
-            <option value="California">California</option>
-          </select>
+          <div className="relative">
+            <select
+              name="state"
+              value={formData.state}
+              onChange={handleChange}
+              className="w-full p-3 border rounded-lg"
+            >
+              <option value="">Select State</option>
+              <option value="Maharashtra">Maharashtra</option>
+              <option value="California">California</option>
+            </select>
+            <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+              <DropdownIcon size={20} />
+            </div>
+          </div>
         </div>
 
         {/* Description */}
@@ -114,11 +131,15 @@ router.push("/chat/ai-drafting/select-template");
         </div>
       </div>
 
-      <div className="mt-8">
+      <div className="mt-8 flex justify-center">
 
-<Button className="inline-block px-6 py-3 bg-black text-white rounded-lg hover:opacity-90" onClick={handleNavigation}> Find Template </Button>
+        <Button
+          className="inline-block px-6 py-3 bg-black text-white rounded-lg hover:opacity-90"
+          onClick={handleNavigation}>
+          Find Template
+        </Button>
 
-</div>
+      </div>
 
     </div>
   );

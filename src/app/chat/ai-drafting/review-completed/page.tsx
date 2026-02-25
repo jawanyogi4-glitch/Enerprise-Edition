@@ -6,12 +6,12 @@ import Button from "@/refresh-components/buttons/Button";
 import { useRouter } from "next/navigation";
 
 export default function ReviewCompletedPage() {
-    const router = useRouter();
-   const handleNavigationDownloadPDF = () => {
-    router.push("/chat/");
+  const router = useRouter();
+  const handleNavigationDownloadPDF = () => {
+    router.push("/chat/ai-drafting");
   };
   const handleNavigationRestartApplication = () => {
-    router.push("/chat/");
+    router.push("/chat/ai-drafting");
   };
   return (
     <>
@@ -43,7 +43,7 @@ export default function ReviewCompletedPage() {
       <div className="w-full min-h-screen bg-[#f4f5f7] px-12 py-10 overflow-y-auto">
 
         {/* PAGE TITLE */}
-        <StepsHITL step={5}/>
+        <StepsHITL step={5} />
         <h1 className="text-2xl font-semibold text-gray-800 mb-6">
           Review Process Completed
         </h1>
@@ -107,36 +107,18 @@ export default function ReviewCompletedPage() {
           </div>
         </div>
 
-        {/* ACTION BUTTONS */}
-          {/* <div className="flex justify-center gap-6 mt-8">
+        <div className="flex justify-center gap-6 mt-8">
+          <div className="mt-8">
 
-            <a
-              href="/chat/"
-              className="px-8 py-3 bg-black text-white rounded-lg hover:opacity-90 transition"
-            >
-              Download PDF
-            </a>
+            <Button className="inline-block px-6 py-3 bg-black text-white rounded-lg hover:opacity-90" onClick={handleNavigationDownloadPDF}> Download PDF </Button>
 
-            <a
-              href="/chat/"
-              className="px-8 py-3 border rounded-lg hover:bg-gray-100 transition"
-            >
-              Restart Application
-            </a>
+          </div>
+          <div className="mt-8">
 
-          </div> */}
-          <div className="flex justify-center gap-6 mt-8">
-                <div className="mt-8">
-          
-                  <Button className="inline-block px-6 py-3 bg-black text-white rounded-lg hover:opacity-90" onClick={handleNavigationDownloadPDF}> Download PDF </Button>
-          
-                </div>
-                      <div className="mt-8">
-                
-                        <Button className=" py-3 border rounded-lg hover:bg-gray-100 transition" secondary onClick={handleNavigationRestartApplication}> Restart Application </Button>
-                
-                      </div>
-                      </div>
+            <Button className=" py-3 border rounded-lg hover:bg-gray-100 transition" secondary onClick={handleNavigationRestartApplication}> Restart Application </Button>
+
+          </div>
+        </div>
 
       </div>
     </>
