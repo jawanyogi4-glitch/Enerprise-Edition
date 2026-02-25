@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-
+import Link from "next/link";
+import { BackButton } from "@/components/BackButton";
+import Button from "@/refresh-components/buttons/Button";
+import StepsHITL from "@/app/chat/components/StepsHITL";
+import { useRouter } from "next/navigation";
 export default function GenerateAgreementPage() {
   const [formData, setFormData] = useState({
     title: "",
@@ -11,14 +15,21 @@ export default function GenerateAgreementPage() {
     description: "",
   });
 
+  const router = useRouter();
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+const handleNavigation = () => {
+  console.log("scjhbkjsc");
+router.push("/chat/ai-drafting/select-template");
+}
 
   return (
     <div className="p-8 w-full">
+      <StepsHITL step={1}/>
       <h1 className="text-2xl font-bold mb-6">
         AI Drafting - Generate any Agreement
       </h1>
@@ -104,10 +115,11 @@ export default function GenerateAgreementPage() {
       </div>
 
       <div className="mt-8">
-        <button className="px-6 py-3 bg-black text-white rounded-lg hover:opacity-90">
-          Find Template
-        </button>
-      </div>
+
+<Button className="inline-block px-6 py-3 bg-black text-white rounded-lg hover:opacity-90" onClick={handleNavigation}> Find Template </Button>
+
+</div>
+
     </div>
   );
 }
