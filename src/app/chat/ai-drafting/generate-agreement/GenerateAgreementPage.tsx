@@ -1,36 +1,102 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CalendarIcon, DropdownIcon } from "@/components/icons/icons";
-import Link from "next/link";
-import { BackButton } from "@/components/BackButton";
 import Button from "@/refresh-components/buttons/Button";
 import StepsHITL from "@/app/chat/components/StepsHITL";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setTemplateData } from "@/redux/template";
+import PageLoader from "@/app/chat/components/loaders/PageLoader";
+
 export default function GenerateAgreementPage() {
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const [countries, setCountries] = useState<any[]>([]);
+  const [selectedCountry, setSelectedCountry] = useState("IN");
+  const [states, setStates] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     effectiveDate: "",
-    country: "",
+    country: "India",
     state: "",
     description: "",
   });
 
-  const router = useRouter();
+
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const res = await axios.get(
+          "https://restcountries.com/v3.1/all?fields=name,cca2"
+        );
+        const sortedCountries = res.data.sort((a: any, b: any) =>
+          a.name.common.localeCompare(b.name.common)
+        );
+        setCountries(sortedCountries);
+      } catch (err) {
+        console.error("Country fetch error:", err);
+      }
+    };
+
+    fetchCountries();
+  }, []);
+
+  useEffect(() => {
+    if (selectedCountry === "IN") {
+      setStates([
+        "Maharashtra",
+        "Delhi",
+        "Karnataka",
+        "Tamil Nadu",
+        "Gujarat",
+        "Uttar Pradesh",
+      ]);
+    } else {
+      setStates([]);
+    }
+  }, [formData.country]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  const handleNavigation = () => {
-    console.log("scjhbkjsc");
-    router.push("/chat/ai-drafting/select-template");
-  }
+
+  const handleNavigation = async () => {
+    try {
+      setLoading(true);
+
+      const response = await axios.post(
+        "/api/find-template",
+        {
+          document_title: formData.title,
+        }
+      );
+      dispatch(
+        setTemplateData({
+          formData,
+          templates: response.data,
+        })
+      );
+
+      router.push("/chat/ai-drafting/select-template");
+
+    } catch (error) {
+      console.error("Find Template API error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="pt-20 px-8 pb-8 w-full">
       <StepsHITL step={1} />
+      {loading && <PageLoader text="Finding Template..." />}
       <h1 className="text-2xl font-bold mb-6">
         AI Drafting - Generate any Agreement
       </h1>
@@ -83,9 +149,15 @@ export default function GenerateAgreementPage() {
               onChange={handleChange}
               className="w-full p-3 border rounded-lg"
             >
-              <option value="">Select Country</option>
-              <option value="India">India</option>
-              <option value="USA">USA</option>
+              {countries.map((country: any) => (
+                <option
+                  key={country.cca2}
+                  value={country.name.common}
+                  disabled={country.name.common !== "India"}
+                >
+                  {country.name.common}
+                </option>
+              ))}
             </select>
             <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
               <DropdownIcon size={20} />
@@ -106,8 +178,11 @@ export default function GenerateAgreementPage() {
               className="w-full p-3 border rounded-lg"
             >
               <option value="">Select State</option>
-              <option value="Maharashtra">Maharashtra</option>
-              <option value="California">California</option>
+              {states.map((state) => (
+                <option key={state} value={state}>
+                  {state}
+                </option>
+              ))}
             </select>
             <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
               <DropdownIcon size={20} />
@@ -135,12 +210,12 @@ export default function GenerateAgreementPage() {
 
         <Button
           className="inline-block px-6 py-3 bg-black text-white rounded-lg hover:opacity-90"
-          onClick={handleNavigation}>
-          Find Template
+          onClick={handleNavigation}
+          disabled={loading}>
+          {loading ? "Searching..." : "Find Template"}
         </Button>
 
       </div>
-
     </div>
   );
 }

@@ -33,6 +33,7 @@ import AccessRestrictedPage from "@/components/errorPages/AccessRestrictedPage";
 import { fetchAssistantData } from "@/lib/chat/fetchAssistantdata";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { fetchAppSidebarMetadata } from "@/lib/appSidebarSS";
+import ReduxProvider from "@/redux/ReduxProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -132,9 +133,11 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <div className="text-text min-h-screen bg-background">
-            <TooltipProvider>
-              <PHProvider>{content}</PHProvider>
-            </TooltipProvider>
+            <ReduxProvider>
+              <TooltipProvider>
+                <PHProvider>{content}</PHProvider>
+              </TooltipProvider>
+            </ReduxProvider>
           </div>
         </ThemeProvider>
       </body>
