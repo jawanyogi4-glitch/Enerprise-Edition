@@ -106,6 +106,10 @@ import loopioIcon from "../../../public/Loopio.png";
 import notionIcon from "../../../public/Notion.png";
 import productboardIcon from "../../../public/Productboard.png";
 import slabLogoIcon from "../../../public/SlabLogo.png";
+import calendarIcon from "../../../public/Calendar-icon.svg";
+import dropdownIcon from "../../../public/Dropdown-icon.svg";
+
+
 export interface IconProps {
   size?: number;
   className?: string;
@@ -3059,6 +3063,8 @@ export const VoyageIconSVG = ({
     />
   </svg>
 );
+export const CalendarIcon = createLogoIcon(calendarIcon);
+export const DropdownIcon = createLogoIcon(dropdownIcon);
 export const WikipediaIcon = createLogoIcon(wikipediaIcon);
 export const XenforoIcon = createLogoIcon(xenforoIcon);
 export const ZAIIcon = createLogoIcon(zAIIcon);

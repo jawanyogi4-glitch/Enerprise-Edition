@@ -4,12 +4,48 @@ import * as Layouts from "@/refresh-components/layouts/layouts";
 import StepsHITL from "../../components/StepsHITL";
 import Button from "@/refresh-components/buttons/Button";
 import { useRouter } from "next/navigation";
+import { RootState } from "@/redux/store";
+import { useSelector, useDispatch } from "react-redux";
+import { useTemplateThunk } from "@/redux/template";
+import { useEffect, useState } from "react";
+import PageLoader from "../../components/loaders/PageLoader";
 
 export default function Page({ settings, chatSession }: any) {
   const router = useRouter();
+  const dispatch = useDispatch();
 
-  const handleNavigationUseTemplate = () => {
-    router.push("/chat/ai-drafting/initial-draft");
+  const { formData, templates, loading } = useSelector(
+    (state: RootState) => state.template
+  );
+
+  const [contractText, setContractText] = useState<string>("");
+  const [contractTitle, setContractTitle] = useState<string>("");
+  const [requestId, setRequestId] = useState<string>("");
+
+  useEffect(() => {
+    const { contract_text, contract_title } = templates?.data?.[0] || {};
+    const { request_id } = templates?.meta || {};
+    setContractText(contract_text || "");
+    setContractTitle(contract_title || "");
+    setRequestId(request_id || "");
+  }, []);
+
+  const handleNavigationUseTemplate = async () => {
+    if (!templates?.data?.length) return;
+
+    const resultAction = await dispatch(
+      useTemplateThunk({
+        document_title: formData?.title,
+        effective_date: formData?.effectiveDate,
+        country: formData?.country,
+        state: formData?.state,
+        description: formData?.description,
+      }) as any
+    );
+
+    if (useTemplateThunk.fulfilled.match(resultAction)) {
+      router.push("/chat/ai-drafting/initial-draft");
+    }
   };
 
   const handleNavigationGenerateFromScratch = () => {
@@ -18,6 +54,7 @@ export default function Page({ settings, chatSession }: any) {
 
   return (
     <Layouts.AppPage settings={settings} chatSession={chatSession}>
+      {loading && <PageLoader text="Select Template..." />}
       <div className="w-full min-h-screen bg-gray-50 px-10 py-8 overflow-y-auto">
 
         <StepsHITL step={2} />
@@ -29,7 +66,7 @@ export default function Page({ settings, chatSession }: any) {
         <div className="bg-gray-200 text-gray-700 px-4 py-3 rounded-lg mb-6">
           Match Found :{" "}
           <span className="font-semibold">
-            Comprehensive Mortgage Deed
+            {contractTitle || "N/A"}
           </span>
         </div>
 
@@ -39,36 +76,13 @@ export default function Page({ settings, chatSession }: any) {
 
           <div className="h-[500px] overflow-y-auto border rounded-lg p-6 bg-gray-100 text-sm leading-relaxed">
 
-            <h3 className="font-semibold mb-4">1. PARTIES</h3>
-
-            <p className="mb-4">
-              <strong>Mortgagor (Borrower):</strong><br />
-              Mr. Arjun Mehta<br />
-              S/o Rajesh Mehta<br />
-              Aged 38 years<br />
-              Residing at: Flat No. 1203, Sunshine Residency, Andheri East, Mumbai – 400069<br />
-              PAN: ABCPM1234K
-            </p>
-
-            <p className="mb-4">
-              <strong>Mortgagee (Lender):</strong><br />
-              ABC National Bank Ltd.<br />
-              Registered Office: 21 Finance Plaza, Bandra Kurla Complex, Mumbai – 400051<br />
-              Through its Authorized Signatory: Ms. Neha Kapoor
-            </p>
-
-            <h3 className="font-semibold mt-6 mb-4">2. LOAN DETAILS</h3>
-
-            <p className="mb-2">Loan Amount: ₹75,00,000</p>
-            <p className="mb-2">Interest Rate: 8.50% (Floating)</p>
-            <p className="mb-2">Loan Tenure: 20 Years</p>
-            <p className="mb-2">EMI Amount: ₹65,124</p>
-
-            <h3 className="font-semibold mt-6 mb-4">6. SIGNATURES</h3>
-
-            <p>Mortgagor Signature: _______________________</p>
-            <p>Mortgagee Signature: _______________________</p>
-
+            {contractText ? (
+              <pre className="whitespace-pre-wrap">
+                {contractText}
+              </pre>
+            ) : (
+              <p className="text-gray-500">No preview available.</p>
+            )}
           </div>
 
           {/* Buttons */}
