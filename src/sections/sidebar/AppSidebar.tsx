@@ -347,6 +347,19 @@ function AppSidebarInner() {
         folded={folded}
         lowlight={!folded}
       >
+        Auto Drafting
+      </SidebarTab>
+    ),
+    [folded, router] // Add 'router' to dependency array
+  );
+    const docgenHitlMainButton = useMemo(
+    () => (
+      <SidebarTab
+        leftIcon={FileCog}
+         href="/chat/docgen_hitl"
+        folded={folded}
+        lowlight={!folded}
+      >
         Docgen HITL
       </SidebarTab>
     ),
@@ -485,6 +498,7 @@ function AppSidebarInner() {
               {moreAgentsButton}
               {newProjectButton}
               {docgenHitlButton}
+              {docgenHitlMainButton}
             </>
           ) : (
             <>
@@ -535,6 +549,7 @@ function AppSidebarInner() {
                   {newProjectButton}
                 </SidebarSection>
                 {docgenHitlButton}
+                {docgenHitlMainButton}
 
                 {/* Recents */}
                 <RecentsSection chatSessions={chatSessions} />
