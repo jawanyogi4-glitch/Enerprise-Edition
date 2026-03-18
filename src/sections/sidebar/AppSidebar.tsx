@@ -1,4 +1,5 @@
 "use client";
+import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import { useCallback, memo, useMemo, useState } from "react";
 import { useSettingsContext } from "@/components/settings/SettingsProvider";
@@ -159,6 +160,10 @@ function AppSidebarInner() {
   const { refreshCurrentProjectDetails, fetchProjects, currentProjectId } =
     useProjectsContext();
   const { popup, setPopup } = usePopup();
+  const { setTheme, theme } = useTheme();
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
 
   // State for custom agent modal
   const [pendingMoveChatSession, setPendingMoveChatSession] =
@@ -343,7 +348,7 @@ function AppSidebarInner() {
     () => (
       <SidebarTab
         leftIcon={FileCog}
-         href="/chat/ai-drafting"
+        href="/chat/ai-drafting"
         folded={folded}
         lowlight={!folded}
       >
@@ -352,11 +357,11 @@ function AppSidebarInner() {
     ),
     [folded, router] // Add 'router' to dependency array
   );
-    const docgenHitlMainButton = useMemo(
+  const docgenHitlMainButton = useMemo(
     () => (
       <SidebarTab
         leftIcon={FileCog}
-         href="/chat/docgen_hitl"
+        href="/chat/docgen_hitl"
         folded={folded}
         lowlight={!folded}
       >
@@ -365,6 +370,21 @@ function AppSidebarInner() {
     ),
     [folded, router] // Add 'router' to dependency array
   );
+
+  //   const themeToggleButton = useMemo(
+  //   () => (
+  //     <SidebarTab
+  //       onClick={toggleTheme}
+  //       folded={folded}
+  //       lowlight={!folded}
+  //     >
+  //       {theme === "dark" ? "Light Mode" : "Dark Mode"}
+  //     </SidebarTab>
+  //   ),
+  //   [folded, theme]
+  // );
+
+
   const { isAdmin, isCurator } = useUser();
   const activeSidebarTab = useAppFocus();
   const createProjectModal = useCreateModal();
@@ -414,7 +434,7 @@ function AppSidebarInner() {
     ),
     [folded, activeSidebarTab, visibleAgents]
   );
-  
+
   const newProjectButton = useMemo(
     () => (
       <SidebarTab
@@ -492,7 +512,15 @@ function AppSidebarInner() {
       )}
 
       <SidebarWrapper folded={folded} setFolded={setFolded}>
-        <SidebarBody footer={settingsButton} actionButton={newSessionButton}>
+        <SidebarBody
+          footer={
+            <>
+              {/* {themeToggleButton} */}
+              {settingsButton}
+            </>
+          }
+          actionButton={newSessionButton}
+        >
           {folded ? (
             <>
               {moreAgentsButton}

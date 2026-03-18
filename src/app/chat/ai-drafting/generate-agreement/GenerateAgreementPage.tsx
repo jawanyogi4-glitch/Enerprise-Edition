@@ -13,10 +13,11 @@ import PageLoader from "@/app/chat/components/loaders/PageLoader";
 export default function GenerateAgreementPage() {
   const dispatch = useDispatch();
   const router = useRouter();
+
   const [countries, setCountries] = useState<any[]>([]);
-  const [selectedCountry, setSelectedCountry] = useState("IN");
   const [states, setStates] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     title: "",
     effectiveDate: "",
@@ -25,27 +26,25 @@ export default function GenerateAgreementPage() {
     description: "",
   });
 
-
   useEffect(() => {
     const fetchCountries = async () => {
       try {
         const res = await axios.get(
           "https://restcountries.com/v3.1/all?fields=name,cca2"
         );
-        const sortedCountries = res.data.sort((a: any, b: any) =>
+        const sorted = res.data.sort((a: any, b: any) =>
           a.name.common.localeCompare(b.name.common)
         );
-        setCountries(sortedCountries);
+        setCountries(sorted);
       } catch (err) {
-        console.error("Country fetch error:", err);
+        console.error(err);
       }
     };
-
     fetchCountries();
   }, []);
 
   useEffect(() => {
-    if (selectedCountry === "IN") {
+    if (formData.country === "India") {
       setStates([
         "Maharashtra",
         "Delhi",
@@ -59,11 +58,7 @@ export default function GenerateAgreementPage() {
     }
   }, [formData.country]);
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
+  const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -71,150 +66,139 @@ export default function GenerateAgreementPage() {
     try {
       setLoading(true);
 
-      const response = await axios.post(
-        "/api/find-template",
-        {
-          document_title: formData.title,
-        }
-      );
-      dispatch(
-        setTemplateData({
-          formData,
-          templates: response.data,
-        })
-      );
+      const res = await axios.post("/api/find-template", {
+        document_title: formData.title,
+      });
 
+      dispatch(setTemplateData({ formData, templates: res.data }));
       router.push("/chat/ai-drafting/select-template");
-
-    } catch (error) {
-      console.error("Find Template API error:", error);
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="pt-20 px-8 pb-8 w-full">
-      <StepsHITL step={1} />
+    <div className="pt-16 px-10 pb-10 w-full min-h-screen bg-[#fafafa] dark:bg-background text-text">
+
+      <StepsHITL step={1} title="AI Drafting - Generate any Agreement" />
+
       {loading && <PageLoader text="Finding Template..." />}
-      <h1 className="text-2xl font-bold mb-6">
-        AI Drafting - Generate any Agreement
-      </h1>
 
-      <div className="grid grid-cols-2 gap-6">
-        {/* Document Title */}
-        <div className="col-span-1">
-          <label className="block text-sm font-medium mb-2">
-            Document Title *
-          </label>
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            placeholder="Please enter the title of the legal document you would like to draft."
-            className="w-full p-3 border rounded-lg"
-          />
-        </div>
+      <div className="grid grid-cols-2 gap-x-6 gap-y-6 mt-8">
 
-        {/* Effective Date */}
-        <div className="col-span-1">
-          <label className="block text-sm font-medium mb-2">
-            Effective Date *
-          </label>
-          <div className="relative">
-            <input
-              type="date"
-              name="effectiveDate"
-              value={formData.effectiveDate}
-              onChange={handleChange}
-              className="w-full p-3 border rounded-lg"
-            />
-            {/* Custom Calendar Icon */}
-            <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-              <CalendarIcon size={20} />
+        {/* INPUT BLOCK */}
+        {[
+          { label: "Document Title*", name: "title", placeholder: "Please enter the title of the legal document you would like to draft.", type: "text", col: 1 },
+          { label: "Effective Date*", name: "effectiveDate", placeholder: "Select date", type: "date", col: 1 },
+        ].map((field, i) => (
+          <div key={i} className={`col-span-${field.col}`}>
+            <label className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1.5 block">
+              {field.label}
+            </label>
+
+            <div className="relative">
+              <input
+                type={field.type}
+                name={field.name}
+                placeholder={field.placeholder}
+                value={(formData as any)[field.name]}
+                onChange={handleChange}
+                className="w-full px-3 py-2.5 bg-white dark:bg-background-neutral-02 border border-gray-300 dark:border-border rounded-md text-sm text-gray-800 dark:text-text focus:outline-none focus:border-gray-400 dark:focus:border-border-03 placeholder:text-gray-400 dark:placeholder:text-text-03"
+              />
+
+              {field.type === "date" && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                  <CalendarIcon size={18} />
+                </div>
+              )}
             </div>
           </div>
-        </div>
+        ))}
 
-        {/* Country */}
+        {/* COUNTRY */}
         <div className="col-span-1">
-          <label className="block text-sm font-medium mb-2">
-            Country *
+          <label className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1.5 block">
+            Country*
           </label>
+
           <div className="relative">
             <select
               name="country"
               value={formData.country}
               onChange={handleChange}
-              className="w-full p-3 border rounded-lg"
+              className="w-full px-3 py-2.5 bg-white dark:bg-background-neutral-02 border border-gray-300 dark:border-border rounded-md text-sm text-gray-800 dark:text-text appearance-none focus:outline-none focus:border-gray-400 dark:focus:border-border-03"
             >
-              {countries.map((country: any) => (
+              <option value="" disabled className="text-gray-300">Select Country</option>
+              {countries.map((c: any) => (
                 <option
-                  key={country.cca2}
-                  value={country.name.common}
-                  disabled={country.name.common !== "India"}
+                  key={c.cca2}
+                  value={c.name.common}
+                  disabled={c.name.common !== "India"}
                 >
-                  {country.name.common}
+                  {c.name.common}
                 </option>
               ))}
             </select>
-            <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-              <DropdownIcon size={20} />
+
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+              <DropdownIcon size={18} />
             </div>
           </div>
         </div>
 
-        {/* State */}
+        {/* STATE */}
         <div className="col-span-1">
-          <label className="block text-sm font-medium mb-2">
-            State *
+          <label className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1.5 block">
+            State*
           </label>
+
           <div className="relative">
             <select
               name="state"
               value={formData.state}
               onChange={handleChange}
-              className="w-full p-3 border rounded-lg"
+              className="w-full px-3 py-2.5 bg-white dark:bg-background-neutral-02 border border-gray-300 dark:border-border rounded-md text-sm text-gray-800 dark:text-text appearance-none focus:outline-none focus:border-gray-400 dark:focus:border-border-03"
             >
               <option value="">Select State</option>
-              {states.map((state) => (
-                <option key={state} value={state}>
-                  {state}
-                </option>
+              {states.map((s) => (
+                <option key={s}>{s}</option>
               ))}
             </select>
-            <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-              <DropdownIcon size={20} />
+
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+              <DropdownIcon size={18} />
             </div>
           </div>
         </div>
 
-        {/* Description */}
+        {/* DESCRIPTION */}
         <div className="col-span-2">
-          <label className="block text-sm font-medium mb-2">
-            Description *
+          <label className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1.5 block">
+            Description*
           </label>
+
           <textarea
             name="description"
             value={formData.description}
             onChange={handleChange}
-            rows={6}
-            placeholder="Please enter all relevant information about the document."
-            className="w-full p-4 border rounded-lg"
+            rows={7}
+            placeholder="Please enter all the relevant information about the document you would like to automated system to consider while drafting."
+            className="w-full px-3 py-3 bg-white dark:bg-background-neutral-02 border border-gray-300 dark:border-border rounded-md text-sm text-gray-800 dark:text-text resize-none focus:outline-none focus:border-gray-400 dark:focus:border-border-03 placeholder:text-gray-400 dark:placeholder:text-text-03"
           />
         </div>
       </div>
 
+      {/* BUTTON */}
       <div className="mt-8 flex justify-center">
-
-        <Button
-          className="inline-block px-6 py-3 bg-black text-white rounded-lg hover:opacity-90"
+        <button
+          className="px-6 py-2.5 dark:bg-white dark:text-black bg-black text-white text-sm rounded-md shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={handleNavigation}
-          disabled={loading}>
+          disabled={loading}
+        >
           {loading ? "Searching..." : "Find Template"}
-        </Button>
-
+        </button>
       </div>
     </div>
   );

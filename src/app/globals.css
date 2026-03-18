@@ -8,6 +8,7 @@
 @tailwind utilities;
 
 @layer base {
+
   /* BORDER RADII */
   :root {
     --border-radius-02: 0.125rem;
@@ -16,6 +17,54 @@
     --border-radius-12: 0.75rem;
     --border-radius-16: 1rem;
     --border-radius-full: 64rem;
+  }
+
+  :root {
+    /* LIGHT THEME */
+    --background: #ffffff;
+    --foreground: #1C1C1C;
+
+    --card: #F0F0F1;
+    --input: #ffffff;
+
+    --border: #e5e5e5;
+
+    /* Scrollbar */
+    --scrollbar-track: #f1f1f1;
+    --scrollbar-thumb: #888;
+    --scrollbar-thumb-hover: #555;
+  }
+
+  .dark {
+    /* DARK THEME */
+    --background: #19191E;
+    --foreground: #ffffff;
+
+    --card: #2A2A2F;
+    --input: #3B3B3B;
+
+    --border: #3f3f46;
+
+    /* Scrollbar */
+    --scrollbar-track: #2a2a2a;
+    --scrollbar-thumb: #555;
+    --scrollbar-thumb-hover: #777;
+  }
+
+  * {
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+
+  input,
+  textarea,
+  select {
+    @apply bg-background-neutral-02 text-text border border-border rounded-08;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    @apply outline-none border-border-03;
   }
 
   /* BACKDROP BLUR */
@@ -36,36 +85,36 @@
   }
 
   input[type="date"] {
-  position: relative;
-}
+    position: relative;
+  }
 
-/* Chrome, Edge, Safari */
-input[type="date"]::-webkit-calendar-picker-indicator {
-  opacity: 0;
-  position: absolute;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
-}
+  /* Chrome, Edge, Safari */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
 
-/* Remove spin buttons */
-input[type="date"]::-webkit-inner-spin-button,
-input[type="date"]::-webkit-clear-button {
-  display: none;
-}
+  /* Remove spin buttons */
+  input[type="date"]::-webkit-inner-spin-button,
+  input[type="date"]::-webkit-clear-button {
+    display: none;
+  }
 
-/* Firefox */
-input[type="date"] {
-  -moz-appearance: textfield;
-}
+  /* Firefox */
+  input[type="date"] {
+    -moz-appearance: textfield;
+  }
 
-select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-image: none;
-}
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: none;
+  }
 
   form {
     display: flex;
@@ -74,8 +123,8 @@ select {
     align-items: start;
   }
 
-  ol > li > p,
-  ul > li > p {
+  ol>li>p,
+  ul>li>p {
     margin-top: 0;
     margin-bottom: 0;
     display: inline;
@@ -128,12 +177,13 @@ select {
   }
 
   /* Remove top margin from first child to align with icon */
-  .prose > :first-child {
+  .prose> :first-child {
     margin-top: 0;
   }
 }
 
 @layer utilities {
+
   /* Hide scrollbar for Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -151,16 +201,19 @@ select {
   .shadow-00 {
     box-shadow: 0px 0px 2px 1px var(--shadow-01);
   }
+
   .shadow-01 {
     box-shadow:
       0px 2px 12px 0px var(--shadow-02),
       0px 0px 4px 1px var(--shadow-02);
   }
+
   .shadow-02 {
     box-shadow:
       0px 2px 24px 0px var(--shadow-03),
       0px 0px 12px 1px var(--shadow-03);
   }
+
   .focus-shadow {
     box-shadow: 0px 0px 0px 2px var(--background-tint-04);
   }
@@ -173,12 +226,22 @@ select {
   .dbg-red {
     border: 1px solid red;
   }
+
   .dbg-blue {
     border: 1px solid blue;
   }
+
   .dbg-green {
     border: 1px solid green;
   }
+}
+
+.card {
+  @apply bg-background-neutral-02 border border-border rounded-08;
+}
+
+.section {
+  @apply bg-background-neutral-01 border border-border rounded-08 p-6;
 }
 
 /* TYPOGRAPHY SYSTEM - Imported from Figma Design System */
@@ -399,23 +462,16 @@ select {
 
 /* Style the scrollbar handle */
 ::-webkit-scrollbar-thumb {
-  background: transparent;
-  /* background: theme("colors.scrollbar.thumb"); */
-  /* Handle color */
+  background: var(--scrollbar-thumb);
   border-radius: 10px;
 }
 
-/* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: transparent;
-  /* background: theme("colors.scrollbar.thumb-hover"); */
-  /* Handle color on hover */
+  background: var(--scrollbar-thumb-hover);
 }
 
 .dark-scrollbar::-webkit-scrollbar-thumb {
-  background: transparent;
-  /* background: theme("colors.scrollbar.dark.thumb"); */
-  /* Handle color */
+  background: var(--scrollbar-thumb);
   border-radius: 10px;
 }
 
@@ -480,13 +536,11 @@ textarea {
 .loading-text {
   color: #e5e5e5;
 
-  background: linear-gradient(
-    -90deg,
-    #a3a3a3 0%,
-    #000000 5%,
-    #a3a3a3 10%,
-    #a3a3a3 100%
-  );
+  background: linear-gradient(-90deg,
+      #a3a3a3 0%,
+      #000000 5%,
+      #a3a3a3 10%,
+      #a3a3a3 100%);
   background-size: 200% 100%;
   background-clip: text;
   -webkit-background-clip: text;
@@ -497,13 +551,11 @@ textarea {
 .dark .loading-text {
   color: #1a1a1a;
 
-  background: linear-gradient(
-    -90deg,
-    #5c5c5c 0%,
-    #ffffff 5%,
-    #5c5c5c 10%,
-    #5c5c5c 100%
-  );
+  background: linear-gradient(-90deg,
+      #5c5c5c 0%,
+      #ffffff 5%,
+      #5c5c5c 10%,
+      #5c5c5c 100%);
   background-size: 200% 100%;
   background-clip: text;
   -webkit-background-clip: text;

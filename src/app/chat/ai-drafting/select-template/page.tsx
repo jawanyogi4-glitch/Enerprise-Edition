@@ -20,15 +20,12 @@ export default function Page({ settings, chatSession }: any) {
 
   const [contractText, setContractText] = useState<string>("");
   const [contractTitle, setContractTitle] = useState<string>("");
-  const [requestId, setRequestId] = useState<string>("");
 
   useEffect(() => {
     const { contract_text, contract_title } = templates?.data?.[0] || {};
-    const { request_id } = templates?.meta || {};
     setContractText(contract_text || "");
     setContractTitle(contract_title || "");
-    setRequestId(request_id || "");
-  }, []);
+  }, [templates]);
 
   const handleNavigationUseTemplate = async () => {
     if (!templates?.data?.length) return;
@@ -54,55 +51,53 @@ export default function Page({ settings, chatSession }: any) {
 
   return (
     <Layouts.AppPage settings={settings} chatSession={chatSession}>
-      {loading && <PageLoader text="Select Template..." />}
-      <div className="w-full min-h-screen bg-gray-50 px-10 py-8 overflow-y-auto">
+      {loading && <PageLoader text="Selecting Template..." />}
 
-        <StepsHITL step={2} />
+      <div className="w-full min-h-screen px-10 py-8 overflow-y-auto bg-background text-text">
 
-        <h1 className="text-3xl font-bold mb-6 mt-4">
-          Select Template
-        </h1>
+        {/* STEP HEADER */}
+        <StepsHITL step={2} title="Select Template" />
 
-        <div className="bg-gray-200 text-gray-700 px-4 py-3 rounded-lg mb-6">
-          Match Found :{" "}
-          <span className="font-semibold">
-            {contractTitle || "N/A"}
-          </span>
+        {/* MATCH INFO */}
+        <div className="mt-6 mb-6 px-4 py-3 rounded-md bg-[#F0F0F1] dark:bg-background-neutral-02 text-[#6C6C6D] dark:text-text-03 text-[14px]">
+          Match Found : {contractTitle || "N/A"}
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border p-6">
+        {/* PREVIEW TITLE */}
+        <h2 className="text-[#6C6C6D] dark:text-text-03 text-[14px] mb-2">
+          Preview
+        </h2>
 
-          <h2 className="text-lg font-semibold mb-4">Preview</h2>
+        {/* PREVIEW BOX */}
+        <div className="h-[500px] overflow-y-auto rounded-md border border-gray-300 dark:border-border bg-white dark:bg-background-neutral-03 p-6 default-scrollbar">
 
-          <div className="h-[500px] overflow-y-auto border rounded-lg p-6 bg-gray-100 text-sm leading-relaxed">
+          {contractText ? (
+            <pre className="whitespace-pre-wrap font-sans text-[#6C6C6D] dark:text-text-02 text-[14px] leading-relaxed">
+              {contractText}
+            </pre>
+          ) : (
+            <p className="text-[#6C6C6D] dark:text-text-03 text-[14px]">No preview available.</p>
+          )}
+        </div>
 
-            {contractText ? (
-              <pre className="whitespace-pre-wrap">
-                {contractText}
-              </pre>
-            ) : (
-              <p className="text-gray-500">No preview available.</p>
-            )}
-          </div>
+        {/* ACTION BUTTONS */}
+        <div className="flex justify-center gap-6 mt-10">
 
-          {/* Buttons */}
-          <div className="flex justify-center gap-6 mt-8">
+          <Button
+            primary
+            className="px-8 py-3 rounded-08 shadow-01 transition-all hover:scale-[1.02]"
+            onClick={handleNavigationUseTemplate}
+          >
+            Use This Template
+          </Button>
 
-            <Button
-              className="px-6 py-3 bg-black text-white rounded-lg hover:opacity-90"
-              onClick={handleNavigationUseTemplate}
-            >
-              Use This Template
-            </Button>
-
-            <Button
-              className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-100"
-              onClick={handleNavigationGenerateFromScratch}
-            >
-              Generate From Scratch
-            </Button>
-
-          </div>
+          <Button
+            secondary
+            className="px-8 py-3 rounded-08 border border-border hover:bg-background-neutral-02 transition-all"
+            onClick={handleNavigationGenerateFromScratch}
+          >
+            Generate From Scratch
+          </Button>
 
         </div>
       </div>

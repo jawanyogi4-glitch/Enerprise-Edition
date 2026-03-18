@@ -4,7 +4,7 @@ import { fetchChatData } from "@/lib/chat/fetchChatData";
 import { ChatProvider } from "@/refresh-components/contexts/ChatContext";
 import { ProjectsProvider } from "./projects/ProjectsContext";
 import AppSidebar from "@/sections/sidebar/AppSidebar";
-
+import ThemeWrapper from "@/components/providers/ThemeWrapper";
 export interface LayoutProps {
   children: React.ReactNode;
 }
@@ -58,10 +58,12 @@ export default async function Layout({ children }: LayoutProps) {
       defaultAssistantId={defaultAssistantId}
     >
       <ProjectsProvider initialProjects={projects}>
-        <div className="flex flex-row w-full h-full">
-          <AppSidebar />
-          {children}
-        </div>
+        <ThemeWrapper>
+<div className="flex flex-row w-full h-full bg-white dark:bg-[#19191E] text-black dark:text-white">
+  <AppSidebar />
+  {children}
+</div>
+</ThemeWrapper>
       </ProjectsProvider>
     </ChatProvider>
   );

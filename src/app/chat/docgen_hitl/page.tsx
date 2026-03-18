@@ -17,6 +17,7 @@ import Cookies from "js-cookie";
 import { SIDEBAR_TOGGLED_COOKIE_NAME } from "@/components/resizable/constants";
 import ReactMarkdown from "react-markdown";
 import axios from "axios";
+import { useTheme } from "next-themes";
 
 const Toast = ({
   message,
@@ -68,7 +69,7 @@ const Toast = ({
 
         <button
           onClick={handleClose}
-          className="ml-2 text-white/80 hover:text-white bg-black pl-4 pr-4 pt-3 pb-3 rounded-full transition"
+          className="ml-2 text-white/80 hover:text-white bg-black dark:bg-gray-800 pl-4 pr-4 pt-3 pb-3 rounded-full transition"
         > Dismiss
         </button>
       </div>
@@ -77,6 +78,7 @@ const Toast = ({
 };
 
 const Page: React.FC = () => {
+  const { theme } = useTheme();
   // State for document type and description
   const router = useRouter();
   const [documentType, setDocumentType] = useState("");
@@ -133,11 +135,11 @@ const Page: React.FC = () => {
     Record<number, { title?: boolean; content?: boolean }>
   >({});
   const documentSubtypes: Record<string, string[]> = {
-  "NDA": ["Mutual NDA", "One-way NDA", "Employee NDA", "Vendor NDA"],
-  "Loan Agreement": ["Secured Loan", "Unsecured Loan", "Personal Loan"],
-  "Employment Contract": ["Full-time", "Part-time", "Consultant"],
-  "Lease Agreement": ["Residential Lease", "Commercial Lease"],
-};
+    "NDA": ["Mutual NDA", "One-way NDA", "Employee NDA", "Vendor NDA"],
+    "Loan Agreement": ["Secured Loan", "Unsecured Loan", "Personal Loan"],
+    "Employment Contract": ["Full-time", "Part-time", "Consultant"],
+    "Lease Agreement": ["Residential Lease", "Commercial Lease"],
+  };
   const handleCopy = (
     text: string,
     index: number,
@@ -240,11 +242,11 @@ const Page: React.FC = () => {
         return;
       }
       if (documentSubtypes[documentType] && !documentSubtype) {
-  setToastMessage("Please select document subtype");
-  setActionState("start");
-  setIsCancelDisabled(false);
-  return;
-}
+        setToastMessage("Please select document subtype");
+        setActionState("start");
+        setIsCancelDisabled(false);
+        return;
+      }
 
       sectionAbortController.current = new AbortController();
       const { signal } = sectionAbortController.current;
@@ -428,7 +430,7 @@ All obligations shall be governed by applicable law.
   return (
     <>
       {/* <div className="flex items-center justify-center min-h-screen bg-[#fafafa] dark:bg-gray-900"> */}
-      <div className="w-full min-h-screen bg-[#fafafa] dark:bg-[#19191E] px-10 py-8 overflow-y-auto">
+      <div className="w-full min-h-screen bg-background text-text px-10 py-8 overflow-y-auto">
         {/* Toast Component */}
         {toastMessage && (
           <Toast
@@ -459,55 +461,55 @@ All obligations shall be governed by applicable law.
             ✔ Titles and contents have been successfully merged!
           </div>
         )}
-        <div className="flex items-center justify-center mb-8">
-          <h1 className="text-4xl font-extrabold text-gray-800 dark:text-white">
+        <div className="flex items-center justify-start mb-8 mt-8">
+          <h1 className="text-3xl font-extrabold text-text">
             HITL Document Generation System
-         </h1>
+          </h1>
         </div>
 
-{/* Document Type and Description */}
-<div className="mb-8">
-  <label className="block text-lg font-medium mb-2">
-    Document Type---
-  </label>
-<select
-  value={documentType}
-  onChange={(e) => {
-    setDocumentType(e.target.value);
-    setDocumentSubtype("");
-  }}
-  className="w-full p-3 border border-gray-300 dark:border-transparent bg-white dark:bg-[#3B3B3B] text-black dark:text-white rounded-lg focus:outline-none hover:border-black dark:hover:border-white focus:border-black dark:focus:border-white"
->
-  <option value="">Select Document Type</option>
+        {/* Document Type and Description */}
+        <div className="mb-8">
+          <label className="block text-lg font-medium mb-2">
+            Document Type---
+          </label>
+          <select
+            value={documentType}
+            onChange={(e) => {
+              setDocumentType(e.target.value);
+              setDocumentSubtype("");
+            }}
+            className="w-full p-3 border border-border bg-background-neutral-03 text-text-02 rounded-08 focus:outline-none hover:border-border-03 focus:border-border-03 transition-colors"
+          >
+            <option value="">Select Document Type</option>
 
-  {Object.keys(documentSubtypes).map((type) => (
-    <option key={type} value={type}>
-      {type}
-    </option>
-  ))}
-</select>
+            {Object.keys(documentSubtypes).map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
 
-  {documentSubtypes[documentType] && (
-    <>
-      <label className="block text-lg font-medium mt-6 mb-2">
-        Document Subtype
-      </label>
+          {documentSubtypes[documentType] && (
+            <>
+              <label className="block text-lg font-medium mt-6 mb-2">
+                Document Subtype
+              </label>
 
-      <select
-        value={documentSubtype}
-        onChange={(e) => setDocumentSubtype(e.target.value)}
-        className="w-full p-3 border border-gray-300 dark:border-transparent bg-white dark:bg-[#3B3B3B] text-black dark:text-white rounded-lg focus:outline-none hover:border-black dark:hover:border-white focus:border-black dark:focus:border-white"
-      >
-        <option value="">Select subtype</option>
+              <select
+                value={documentSubtype}
+                onChange={(e) => setDocumentSubtype(e.target.value)}
+                className="w-full p-3 border border-border bg-background-neutral-03 text-text-02 rounded-08 focus:outline-none hover:border-border-03 focus:border-border-03 transition-colors"
+              >
+                <option value="">Select subtype</option>
 
-        {documentSubtypes[documentType].map((type) => (
-          <option key={type} value={type}>
-            {type}
-          </option>
-        ))}
-      </select>
-    </>
-  )}
+                {documentSubtypes[documentType].map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
           <label className="block text-lg font-medium mt-6 mb-2">
             Description
           </label>
@@ -518,19 +520,17 @@ All obligations shall be governed by applicable law.
               e.target.style.height = "auto"; // Reset height
               e.target.style.height = `${e.target.scrollHeight}px`; // Set new height based on scroll
             }}
-            className="w-full p-3 border border-gray-300 dark:border-transparent bg-white dark:bg-[#3B3B3B] text-black dark:text-white rounded-lg focus:outline-none hover:border-black dark:hover:border-white focus:border-black dark:focus:border-white resize-none overflow-hidden" rows={5}
+            className="w-full p-3 border border-border bg-background-neutral-03 text-text-02 rounded-08 focus:outline-none hover:border-border-03 focus:border-border-03 transition-colors resize-none overflow-hidden" rows={5}
           />
 
           <div className="mt-6 flex justify-between">
             <button
               onClick={handleInitDocument}
               disabled={isBeginDisabled} // Disable based on state
-              className={`px-4 py-2 text-white rounded-lg shadow-md focus:outline-none ${isBeginDisabled
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : isLoading
-                    ? "bg-red-500"
-                    : "bg-blue-500"
-                }`}
+              className={`px-4 py-2 rounded-lg shadow-md focus:outline-none text-white
+${isBeginDisabled ? "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                  : isLoading ? "bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700"
+                    : "bg-blue-500 hover:bg-blue-600 dark:bg-indigo-600 dark:hover:bg-indigo-700"}`}
               title={
                 isBeginDisabled
                   ? "Disabled during Finalize (2/2) or generation process"
@@ -552,10 +552,10 @@ All obligations shall be governed by applicable law.
             <button
               onClick={handleClear}
               disabled={isCancelDisabled} // Ensure button is disabled when `isCancelDisabled` is true
-              className={`px-4 py-2 rounded-lg shadow-md transition-all duration-300 ease-in-out transform hover:scale-105 ${isCancelDisabled
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "bg-red-500 text-white hover:bg-red-600"
-                }`}
+              className={`px-4 py-2 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-white
+${isCancelDisabled
+                  ? "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                  : "bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700"}`}
               title={
                 isCancelDisabled
                   ? "Disabled during document generation"
@@ -585,11 +585,10 @@ All obligations shall be governed by applicable law.
                       );
                     }
                   }}
-                  className={`w-full p-3 border rounded-lg mr-3 font-medium 
-bg-white dark:bg-[#3B3B3B] text-black dark:text-white
+                  className={`w-full p-3 border rounded-08 mr-3 font-medium transition-colors
 ${editableIndexes.includes(index)
-                      ? "border-gray-300 dark:border-transparent"
-                      : "border-gray-200 dark:border-transparent bg-gray-100 dark:bg-[#3B3B3B] cursor-not-allowed"
+                      ? "bg-background-neutral-03 border-border text-text-02 focus:outline-none hover:border-border-03 focus:border-border-03"
+                      : "bg-background-neutral-02 border-transparent text-text-03 cursor-not-allowed"
                     }`}
                   readOnly={!editableIndexes.includes(index)} // Disable editing if not in editableIndexes
                   onClick={() => {
@@ -635,8 +634,8 @@ ${editableIndexes.includes(index)
                   <button
                     onClick={() => handleCopy(title, index, "title")}
                     className={`${copiedStatus[index]?.title
-                        ? "text-black-500"
-                        : "text-black-500"
+                      ? "text-black-500"
+                      : "text-black-500"
                       } hover:text-gray-700 flex items-center justify-center mr-3`}
                     aria-label="Copy Title"
                     title="Copy the Title"
@@ -686,8 +685,8 @@ ${editableIndexes.includes(index)
                 }}
                 disabled={isLoading || areTitlesSaved}
                 className={`px-4 py-2 ${areTitlesSaved
-                    ? "bg-green-500 text-white cursor-not-allowed"
-                    : "bg-blue-500 hover:bg-blue-600 text-white"
+                  ? "bg-green-500 text-white cursor-not-allowed"
+                  : "bg-blue-500 hover:bg-blue-600 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white"
                   } rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 ease-in-out transform hover:scale-105`}
                 onMouseEnter={() =>
                   !areTitlesSaved &&
@@ -742,7 +741,7 @@ ${editableIndexes.includes(index)
                     handleGenerateDocument(); // Start generation process
                   }
                 }}
-                className={`px-4 py-2 text-white rounded-lg shadow-md focus:outline-none ${isFetchingGeneratedDocument ? "bg-red-500" : "bg-green-500"
+                className={`px-4 py-2 text-white rounded-lg shadow-md focus:outline-none ${isFetchingGeneratedDocument ? "bg-red-500 dark:bg-red-600" : "bg-green-500 hover:bg-green-600 dark:bg-emerald-600 dark:hover:bg-emerald-700"
                   } hover:bg-green-600`}
               >
                 {isFetchingGeneratedDocument ? (
@@ -782,14 +781,14 @@ ${editableIndexes.includes(index)
                         setGeneratedDocument(updatedDocument);
                       }
                     }}
-                    className="w-full p-3 border border-gray-300 dark:border-transparent bg-white dark:bg-[#3B3B3B] text-black dark:text-white rounded-lg mr-9 font-bold hover:border-black dark:hover:border-white focus:border-black dark:focus:border-white" />
+                    className="w-full p-3 border border-border bg-background-neutral-03 text-text-02 rounded-08 mr-9 font-bold hover:border-border-03 focus:border-border-03 focus:outline-none transition-colors" />
                   <button
                     onClick={() => {
                       handleCopy(section.title, index, "title");
                     }} // Copy title text
                     className={`${copiedStatus[index]?.title
-                        ? "text-black-500"
-                        : "text-black-500"
+                      ? "text-black-500"
+                      : "text-black-500"
                       } hover:text-gray-700 flex items-center justify-center`}
                     aria-label="Copy Title"
                     title="Copy Title"
@@ -819,10 +818,10 @@ ${editableIndexes.includes(index)
                             setGeneratedDocument(updatedDocument);
                           }
                         }}
-                        className="w-full p-4 border border-gray-300 dark:border-transparent bg-white dark:bg-[#3B3B3B] text-black dark:text-white rounded-lg hover:border-black dark:hover:border-white focus:border-black dark:focus:border-white" rows={6}
+                        className="w-full p-4 border border-border bg-background-neutral-03 text-text-02 rounded-08 hover:border-border-03 focus:border-border-03 focus:outline-none transition-colors" rows={6}
                       />
                     ) : (
-                      <div className="prose dark:prose-invert max-w-none w-full p-4 border border-gray-300 dark:border-transparent rounded-lg bg-white dark:bg-[#3B3B3B] text-black dark:text-white hover:border-black dark:hover:border-white">
+                      <div className="prose dark:prose-invert max-w-none w-full p-4 border border-border rounded-08 bg-background-neutral-03 text-text-02 hover:border-border-03 transition-colors default-scrollbar">
                         <ReactMarkdown>{section.content}</ReactMarkdown>
                       </div>
                     )}
@@ -833,8 +832,8 @@ ${editableIndexes.includes(index)
                       handleCopy(section.content, index, "content");
                     }} // Copy content text
                     className={`${copiedStatus[index]?.content
-                        ? "text-black-500"
-                        : "text-black-500"
+                      ? "text-black-500"
+                      : "text-black-500"
                       } hover:text-gray-700 flex items-center justify-center`}
                     aria-label="Copy Content"
                     title="Copy Content"
@@ -897,14 +896,12 @@ ${editableIndexes.includes(index)
             <div className="text-center flex justify-center space-x-4">
               <button
                 onClick={handleMerge}
-                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-medium rounded-lg shadow-md hover:shadow-lg hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all duration-300 transform hover:scale-105"
-              >
+                className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-700 dark:from-indigo-700 dark:to-purple-800 text-white text-sm font-medium rounded-lg shadow-md hover:shadow-lg hover:from-indigo-700 hover:to-purple-800 focus:outline-none transition-all duration-300 transform hover:scale-105"              >
                 Merge Titles & Contents into a Single Document
               </button>
               <button
                 onClick={handleMergeTitles}
-                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-medium rounded-lg shadow-md hover:shadow-lg hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all duration-300 transform hover:scale-105"
-              >
+                className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-700 dark:from-indigo-700 dark:to-purple-800 text-white text-sm font-medium rounded-lg shadow-md hover:shadow-lg hover:from-indigo-700 hover:to-purple-800 focus:outline-none transition-all duration-300 transform hover:scale-105"              >
                 Merge Titles into a Single Document
               </button>
             </div>
@@ -917,7 +914,7 @@ ${editableIndexes.includes(index)
               Merged Document of {documentSubtype || documentType}
             </label>
             <div className="relative">
-              <div className="prose dark:prose-invert max-w-none w-full p-6 border border-gray-300 dark:border-transparent bg-white dark:bg-[#3B3B3B] text-black dark:text-white rounded-lg max-h-[100vh] overflow-y-auto">
+              <div className="prose dark:prose-invert max-w-none w-full p-6 border border-border bg-background-neutral-03 text-text-02 rounded-08 max-h-[100vh] overflow-y-auto default-scrollbar">
                 <ReactMarkdown>{mergedDocument}</ReactMarkdown>
               </div>
 
@@ -945,7 +942,7 @@ ${editableIndexes.includes(index)
               <textarea
                 value={mergedTitles}
                 onChange={(e) => setMergedTitles(e.target.value)}
-                className="w-full p-6 border border-gray-300 dark:border-transparent bg-white dark:bg-[#3B3B3B] text-black dark:text-white rounded-lg"
+                className="w-full p-6 border border-border bg-background-neutral-03 text-text-02 rounded-08 default-scrollbar"
                 rows={8} // Smaller text area for titles
               ></textarea>
               <button
@@ -967,14 +964,14 @@ ${editableIndexes.includes(index)
         {isLoading && (
           <div className="flex flex-col items-center justify-center mt-8">
             <FadeLoader
-              color="#000000"
+              color={theme === "dark" ? "#ffffff" : "#000000"}
               height={11.5}
               width={4}
               radius={5}
               margin={-2}
               speedMultiplier={1.2}
             />
-            <p className="mt-4 text-lg font-medium text-black dark:text-white">
+            <p className="mt-4 text-lg font-medium text-text-02">
               {progressMessage}
             </p>
           </div>
