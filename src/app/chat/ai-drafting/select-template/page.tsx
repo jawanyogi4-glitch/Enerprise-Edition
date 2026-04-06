@@ -46,7 +46,7 @@ export default function Page({ settings, chatSession }: any) {
   };
 
   const handleNavigationGenerateFromScratch = () => {
-    router.push("/chat/ai-drafting/generate-from-scratch");
+    router.push("/chat/docgen_hitl");
   };
 
   return (
@@ -64,7 +64,7 @@ export default function Page({ settings, chatSession }: any) {
         </div>
 
         {/* PREVIEW TITLE */}
-        <h2 className="text-[#6C6C6D] dark:text-text-03 text-[14px] mb-2">
+        <h2 className="text-[#6C6C6D] dark:text-text-03 text-[16px] mb-2">
           Preview
         </h2>
 
@@ -72,11 +72,11 @@ export default function Page({ settings, chatSession }: any) {
         <div className="h-[500px] overflow-y-auto rounded-md border border-gray-300 dark:border-border bg-white dark:bg-background-neutral-03 p-6 default-scrollbar">
 
           {contractText ? (
-            <pre className="whitespace-pre-wrap font-sans text-[#6C6C6D] dark:text-text-02 text-[14px] leading-relaxed">
+            <pre className="whitespace-pre-wrap font-sans text-[#6C6C6D] dark:text-text-02 text-[16px] leading-relaxed">
               {contractText}
             </pre>
           ) : (
-            <p className="text-[#6C6C6D] dark:text-text-03 text-[14px]">No preview available.</p>
+            <p className="text-[#6C6C6D] dark:text-text-03 text-[16px]">No preview available.</p>
           )}
         </div>
 

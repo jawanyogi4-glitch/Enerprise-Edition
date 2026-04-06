@@ -44,7 +44,7 @@ export default function InitialDraftPage({ settings, chatSession }: any) {
         <StepsHITL step={3} title="Initial Draft Generated" />
 
         {/* INFO BOX */}
-        <div className="mt-6 mb-6 px-4 py-3 rounded-md bg-[#F0F0F1] dark:bg-background-neutral-02 text-[#6C6C6D] dark:text-text-03 text-[16px]">
+        <div className="mt-6 mb-6 px-4 py-3 rounded-md bg-[#F0F0F1] dark:bg-background-neutral-02 text-[#6C6C6D] dark:text-text-03 text-[14px]">
           This is the raw draft. Proceed to the AI Reviewer to check for risks.
         </div>
 

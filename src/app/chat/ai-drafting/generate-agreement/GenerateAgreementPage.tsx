@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { CalendarIcon, DropdownIcon } from "@/components/icons/icons";
 import Button from "@/refresh-components/buttons/Button";
 import StepsHITL from "@/app/chat/components/StepsHITL";
@@ -17,6 +17,11 @@ export default function GenerateAgreementPage() {
   const [countries, setCountries] = useState<any[]>([]);
   const [states, setStates] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [countryOpen, setCountryOpen] = useState(false);
+  const [countrySearch, setCountrySearch] = useState("");
+  const [stateOpen, setStateOpen] = useState(false);
+  const countryRef = useRef<HTMLDivElement>(null);
+  const stateRef = useRef<HTMLDivElement>(null);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -25,6 +30,17 @@ export default function GenerateAgreementPage() {
     state: "",
     description: "",
   });
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (countryRef.current && !countryRef.current.contains(e.target as Node))
+        setCountryOpen(false);
+      if (stateRef.current && !stateRef.current.contains(e.target as Node))
+        setStateOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -80,7 +96,7 @@ export default function GenerateAgreementPage() {
   };
 
   return (
-    <div className="pt-16 px-10 pb-10 w-full min-h-screen bg-[#fafafa] dark:bg-background text-text">
+    <div className=" px-10 py-8 w-full min-h-screen bg-[#fafafa] dark:bg-background text-text">
 
       <StepsHITL step={1} title="AI Drafting - Generate any Agreement" />
 
@@ -117,59 +133,114 @@ export default function GenerateAgreementPage() {
           </div>
         ))}
 
-        {/* COUNTRY */}
         <div className="col-span-1">
           <label className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1.5 block">
             Country*
           </label>
 
-          <div className="relative">
-            <select
-              name="country"
-              value={formData.country}
-              onChange={handleChange}
-              className="w-full px-3 py-2.5 bg-white dark:bg-background-neutral-02 border border-gray-300 dark:border-border rounded-md text-sm text-gray-800 dark:text-text appearance-none focus:outline-none focus:border-gray-400 dark:focus:border-border-03"
+          <div className="relative" ref={countryRef}>
+            {/* Trigger */}
+            <button
+              type="button"
+              onClick={() => { setCountryOpen((o) => !o); setCountrySearch(""); }}
+              className="w-full flex items-center justify-between px-3 py-2.5 bg-white dark:bg-background-neutral-02 border border-gray-300 dark:border-border rounded-md text-sm text-gray-800 dark:text-text focus:outline-none focus:border-gray-400 dark:focus:border-border-03"
             >
-              <option value="" disabled className="text-gray-300">Select Country</option>
-              {countries.map((c: any) => (
-                <option
-                  key={c.cca2}
-                  value={c.name.common}
-                  disabled={c.name.common !== "India"}
-                >
-                  {c.name.common}
-                </option>
-              ))}
-            </select>
-
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+              <span className={formData.country ? "" : "text-gray-400 dark:text-text-03"}>
+                {formData.country || "Select Country"}
+              </span>
               <DropdownIcon size={18} />
-            </div>
+            </button>
+
+            {countryOpen && (
+              <div className="absolute z-50 top-full mt-1 left-0 w-full bg-white dark:bg-background-neutral-02 border border-gray-300 dark:border-border rounded-md shadow-lg overflow-hidden">
+
+                <div className="p-2 border-b border-gray-200 dark:border-border">
+                  <input
+                    autoFocus
+                    type="text"
+                    placeholder="Search country..."
+                    value={countrySearch}
+                    onChange={(e) => setCountrySearch(e.target.value)}
+                    className="w-full px-2 py-1.5 text-sm bg-gray-50 dark:bg-background border border-gray-200 dark:border-border rounded focus:outline-none text-gray-800 dark:text-text placeholder:text-gray-400"
+                  />
+                </div>
+                {/* List */}
+                <ul className="max-h-52 overflow-y-auto">
+                  {countries
+                    .filter((c: any) =>
+                      c.name.common.toLowerCase().includes(countrySearch.toLowerCase())
+                    )
+                    .map((c: any) => {
+                      const isSelectable = c.name.common === "India";
+                      return (
+                        <li
+                          key={c.cca2}
+                          onClick={() => {
+                            if (!isSelectable) return;
+                            setFormData((f) => ({ ...f, country: c.name.common }));
+                            setCountryOpen(false);
+                          }}
+                          className={`px-3 py-2 text-sm ${isSelectable
+                              ? "cursor-pointer text-gray-800 dark:text-text hover:bg-gray-100 dark:hover:bg-background"
+                              : "cursor-not-allowed text-gray-400 dark:text-text-03"
+                            } ${formData.country === c.name.common ? "bg-gray-100 dark:bg-background font-medium" : ""}`}
+                        >
+                          {c.name.common}
+                          {!isSelectable && (
+                            <span className="ml-2 text-xs text-gray-400">(unavailable)</span>
+                          )}
+                        </li>
+                      );
+                    })}
+                  {countries.filter((c: any) =>
+                    c.name.common.toLowerCase().includes(countrySearch.toLowerCase())
+                  ).length === 0 && (
+                      <li className="px-3 py-2 text-sm text-gray-400">No results</li>
+                    )}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* STATE */}
+        {/* STATE  custom dropdown */}
         <div className="col-span-1">
           <label className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1.5 block">
             State*
           </label>
 
-          <div className="relative">
-            <select
-              name="state"
-              value={formData.state}
-              onChange={handleChange}
-              className="w-full px-3 py-2.5 bg-white dark:bg-background-neutral-02 border border-gray-300 dark:border-border rounded-md text-sm text-gray-800 dark:text-text appearance-none focus:outline-none focus:border-gray-400 dark:focus:border-border-03"
+          <div className="relative" ref={stateRef}>
+            <button
+              type="button"
+              onClick={() => states.length > 0 && setStateOpen((o) => !o)}
+              className="w-full flex items-center justify-between px-3 py-2.5 bg-white dark:bg-background-neutral-02 border border-gray-300 dark:border-border rounded-md text-sm text-gray-800 dark:text-text focus:outline-none focus:border-gray-400 dark:focus:border-border-03 disabled:opacity-50"
+              disabled={states.length === 0}
             >
-              <option value="">Select State</option>
-              {states.map((s) => (
-                <option key={s}>{s}</option>
-              ))}
-            </select>
-
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+              <span className={formData.state ? "" : "text-gray-400 dark:text-text-03"}>
+                {formData.state || "Select State"}
+              </span>
               <DropdownIcon size={18} />
-            </div>
+            </button>
+
+            {stateOpen && states.length > 0 && (
+              <div className="absolute z-50 top-full mt-1 left-0 w-full bg-white dark:bg-background-neutral-02 border border-gray-300 dark:border-border rounded-md shadow-lg overflow-hidden">
+                <ul className="max-h-52 overflow-y-auto">
+                  {states.map((s) => (
+                    <li
+                      key={s}
+                      onClick={() => {
+                        setFormData((f) => ({ ...f, state: s }));
+                        setStateOpen(false);
+                      }}
+                      className={`px-3 py-2 text-sm cursor-pointer text-gray-800 dark:text-text hover:bg-gray-100 dark:hover:bg-background ${formData.state === s ? "bg-gray-100 dark:bg-background font-medium" : ""
+                        }`}
+                    >
+                      {s}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
 
